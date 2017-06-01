@@ -1,51 +1,65 @@
-
-    function uploadFile(file, signedReq, url){
-      var xhr = new XMLHttpRequest();
-      xhr.open('PUT', signedReq);
-      xhr.onreadystatechange = () => {
-        if(xhr.readyState === 4){
-          if(xhr.status === 200){
-            document.getElementById('preview').src = url;
-            document.getElementById('pic-url').value = url;
-          }
-          else{
-            alert('Could not upload file.');
-          }
-        }
-      };
-      xhr.send(file);
+//to get image preview 
+function readURL(input) {
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      $('#preview').attr('src', e.target.result);
     }
-    /*
-      Function to get the temporary signed request from the app.
-      If request successful, continue to upload the file using this signed
-      request.
-    */
-    function uploadRequest(file){
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', `/sign-s3?file-name=${file.name}&file-type=${file.type}`);
-      console.log(xhr)
-      xhr.onreadystatechange = () => {
-        if(xhr.readyState === 4){
-          if(xhr.status === 200){
-            var res = JSON.parse(xhr.responseText);
-            uploadFile(file, res.signedRequest, res.url);
-          }
-          else{
-            alert('Could not get signed URL.');
-          }
-        }
-      };
-      xhr.send();
-    }
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+$("#file-input").change(function(){
+  readURL(this);
+});
 
- 
-     // start upload procedure by asking for a signed request from the app.
-    
-    function initUpload(){
-      var files = document.getElementById('file-input').files;
-      var file = files[0];
-      if(file == null){
-        return alert('No file selected.');
+//to upload file 
+function uploadFile(file, signedReq, url){
+  var xhr = new XMLHttpRequest();
+  xhr.open('PUT', signedReq);
+  xhr.onreadystatechange = () => {
+    if(xhr.readyState === 4){
+      if(xhr.status === 200){
+        document.getElementById('pic-url').value = url;
       }
-      uploadRequest(file);
+      else{
+        alert('Could not upload file.');
+      }
     }
+  };
+  xhr.send(file);
+}
+/*
+  Function to get the temporary signed request from the app.
+  If request successful, continue to upload the file using this signed
+  request.
+  */
+  function uploadRequest(file){
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', `/sign-s3?file-name=${file.name}&file-type=${file.type}`);
+    console.log(xhr)
+    xhr.onreadystatechange = () => {
+      if(xhr.readyState === 4){
+        if(xhr.status === 200){
+          var res = JSON.parse(xhr.responseText);
+          uploadFile(file, res.signedRequest, res.url);
+        }
+        else{
+          alert('Could not get signed URL.');
+        }
+      }
+    };
+    xhr.send();
+  }
+
+
+ // start upload procedure by asking for a signed request from the app.
+ function initUpload(){
+  var files = document.getElementById('file-input').files;
+  var file = files[0];
+  if(file == null){
+    return alert('No file selected.');
+  }
+  uploadRequest(file);
+}
+
+(() => {document.getElementById('file-input').onchange = initUpload();})();

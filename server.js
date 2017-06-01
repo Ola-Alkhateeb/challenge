@@ -20,12 +20,12 @@ app.get('/', (req, res) => res.render('main.html'));
  * the anticipated URL of the image.
  */
 app.get('/sign-s3', (req, res) => {
-  const s3 = new aws.S3();
+  const s3 = new aws.S3( { params: {Bucket: 'myBucket'} });
   const fileName = req.query['file-name'];
   const fileType = req.query['file-type'];
   const s3Params = {
     Bucket: S3_BUCKET,
-    Key: fileName,
+    Key: 'AKIAJIOHZOAY32EDIWEA',
     Expires: 60,
     ContentType: fileType,
     ACL: 'public-read'
@@ -36,6 +36,7 @@ app.get('/sign-s3', (req, res) => {
       console.log(err);
       return res.end();
     }
+    console.log(data)
     const returnData = {
       signedRequest: data,
       url: `https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`
@@ -45,7 +46,7 @@ app.get('/sign-s3', (req, res) => {
   });
 });
 
-app.post('/save-details', (req, res) => {
-console.log(req) ;
 
+app.post('/save-details', (req, res) => {
+//im suppose to get all images link here 
 });
