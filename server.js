@@ -44,3 +44,8 @@ app.get('/sign-s3', (req, res) => {
     res.end();
   });
 });
+
+app.post('/save-details', (req, res) => {
+console.log(req) ;
+
+});
